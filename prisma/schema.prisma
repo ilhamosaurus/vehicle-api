@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  password  String
+  isAdmin   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Vehicle_brand {
+  id        String         @id @default(cuid())
+  name      String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  type      Vehicle_type[]
+
+  @@map("vehicle_brand")
+}
+
+model Vehicle_type {
+  id        String   @id @default(cuid())
+  name      String
+  brand_id  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  brand Vehicle_brand   @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  model Vehicle_model[]
+
+  @@map("vehicle_type")
+}
+
+model Vehicle_model {
+  id        String   @id @default(cuid())
+  name      String
+  type_id   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type      Vehicle_type @relation(fields: [type_id], references: [id], onDelete: Cascade)
+  Pricelist Pricelist[]
+
+  @@map("vehicle_model")
+}
+
+model Vehicle_year {
+  id        String      @id @default(cuid())
+  year      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Pricelist Pricelist[]
+
+  @@map("vehicle_year")
+}
+
+model Pricelist {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  price     Decimal  @db.Decimal(12, 2)
+  model_id  String
+  year_id   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  model Vehicle_model @relation(fields: [model_id], references: [id], onDelete: Cascade)
+  year  Vehicle_year  @relation(fields: [year_id], references: [id], onDelete: Cascade)
+
+  @@map("pricelists")
+}
