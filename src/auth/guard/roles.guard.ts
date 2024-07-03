@@ -1,36 +1,32 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private jwtService: JwtService,
     private config: ConfigService,
+    private jwt: JwtService,
   ) {}
 
-  canActivate(context: ExecutionContext) {
-    const requiredRoles = this.reflector.getAllAndOverride<string>('role', [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-
-    if (!requiredRoles) return true;
-
-    const request = context.switchToHttp().getRequest();
-    const token = request.headers.autorization.split(' ')[1];
-
-    type Payload = {
-      sub: string;
-      name: string;
-      admin: boolean;
-    };
+  canActivate(context: ExecutionContext): boolean {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    if (!roles || roles.length === 0) {
+      return true;
+    }
+    const request = context.switchToHttp().getRequest<Request>();
+    const token = request.headers.authorization.split(' ')[1];
 
     const secret = this.config.get<string>('SECRET');
-    const payload: Payload = this.jwtService.verify(token, { secret });
+    const payload = this.jwt.verify(token, {
+      secret,
+    });
 
-    return requiredRoles.includes(payload.admin ? 'admin' : 'user');
+    const userRole = payload.admin ? 'admin' : 'user';
+
+    return roles.some((role) => userRole.includes(role));
   }
 }

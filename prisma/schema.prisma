@@ -62,7 +62,7 @@ model Vehicle_model {
 
 model Vehicle_year {
   id        String      @id @default(cuid())
-  year      String
+  year      Int
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   Pricelist Pricelist[]
