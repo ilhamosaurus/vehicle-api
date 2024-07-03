@@ -1,0 +1,162 @@
+{
+	"info": {
+		"_postman_id": "97a29108-a3da-494b-9734-732cac3a4a08",
+		"name": "seru_test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31049971",
+		"_collection_link": "https://lively-shuttle-748420.postman.co/workspace/My-Workspace~590c41f0-c893-4fc6-87c6-ecba8367a0ac/collection/31049971-97a29108-a3da-494b-9734-732cac3a4a08?action=share&source=collection_link&creator=31049971"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"ilhamo\",\r\n    \"password\": \"qwerty123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"test\",\r\n    \"password\": \"qwerty123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Vehicle",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk0a3VjazcwMDAwdDk1Zjg2eHowenUyIiwibmFtZSI6ImlsaGFtbyIsImFkbWluIjp0cnVlLCJpYXQiOjE3MTk5OTMxMzksImV4cCI6MTcyMDAwMzkzOX0.MU9ECX5BN9CzYTnxQ774GrGLij6nrG50BhGZb1ll9Fg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"brand\": \"BMW\",\r\n    \"type\": \"Hatchback\",\r\n    \"model\": \"EV\",\r\n    \"year\": 2023,\r\n    \"price\": 900000000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/vehicle/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pricelists",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk1aTNndGswMDA5cHcxYTN5eXcwZTQ4IiwibmFtZSI6InRlc3QiLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTcyMDAzMjA1MCwiZXhwIjoxNzIwMDQyODUwfQ.95QJSmUqD7XmYs7Jv2COL1u4JSxy4wzbh7Jgcd-WTzU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/vehicle/pricelist?model=EV",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"pricelist"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "BMW-EV2023-5",
+							"disabled": true
+						},
+						{
+							"key": "year",
+							"value": "2023",
+							"disabled": true
+						},
+						{
+							"key": "model",
+							"value": "EV"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Vehicle Detail",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
