@@ -10,7 +10,9 @@ import {
   CreateVehicleDto,
   GetPriceDto,
   UpdateBrandDto,
+  UpdateModelDto,
   UpdatePriceDto,
+  UpdateTypeDto,
 } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
@@ -160,7 +162,37 @@ export class VehicleService {
     }
   }
 
-  async getAllPricelists() {
+  async getAllPricelists(pageNumber?: string, pageSize?: string) {
+    if (pageNumber && pageSize) {
+      const skip = (parseInt(pageNumber) - 1) * parseInt(pageSize);
+      const take = parseInt(pageSize);
+      const pricelists = await this.prisma.pricelist.findMany({
+        select: {
+          code: true,
+          price: true,
+        },
+        skip,
+        take,
+      });
+
+      if (!pricelists || pricelists.length === 0) {
+        throw new NotFoundException('No pricelists found', {
+          cause: new Error(),
+          description: 'No pricelists found',
+        });
+      }
+
+      return {
+        status: HttpStatus.OK,
+        message: 'All pricelists retrieved successfully',
+        data: pricelists.map((pricelist) => ({
+          code: pricelist.code,
+          price: Number(pricelist.price),
+          currentPage: parseInt(pageNumber),
+          pageSize: pricelists.length < take ? pricelists.length : take,
+        })),
+      };
+    }
     const pricelists = await this.prisma.pricelist.findMany({
       select: {
         code: true,
@@ -186,128 +218,115 @@ export class VehicleService {
   }
 
   async getPriceByFilter(filter: GetPriceDto) {
-    if (filter.year && filter.model) {
+    if (filter.pageSize && filter.pageNumber) {
+      const skip =
+        (parseInt(filter.pageNumber) - 1) * parseInt(filter.pageSize);
+      const take = parseInt(filter.pageSize);
       const prices = await this.prisma.pricelist.findMany({
         where: {
-          model: {
-            name: {
-              contains: filter.model,
-              mode: 'insensitive',
+          OR: [
+            {
+              model: { name: { contains: filter.model, mode: 'insensitive' } },
             },
-          },
-          year: {
-            year: parseInt(filter.year),
-          },
+            { year: { year: filter.year ? parseInt(filter.year) : undefined } },
+            {
+              AND: [
+                {
+                  year: {
+                    year: filter.year ? parseInt(filter.year) : undefined,
+                  },
+                  model: {
+                    name: { contains: filter.model, mode: 'insensitive' },
+                  },
+                },
+              ],
+            },
+          ],
         },
         select: {
           code: true,
           price: true,
+          year: {
+            select: {
+              year: true,
+            },
+          },
+          model: {
+            select: {
+              name: true,
+            },
+          },
         },
+        skip,
+        take,
       });
 
       if (!prices || prices.length === 0) {
-        throw new NotFoundException(
-          `Invalid year and model: ${filter.year} & ${filter.model}`,
-          {
-            cause: new Error(),
-            description: 'Invalid year and model',
-          },
-        );
+        throw new NotFoundException(`No data found`, {
+          cause: new Error(),
+          description: 'No data found',
+        });
       }
 
       return prices.map((price) => ({
-        model: filter.model.charAt(0).toUpperCase() + filter.model.slice(1),
-        year: parseInt(filter.year),
+        model: filter.model
+          ? filter.model.charAt(0).toUpperCase() + filter.model.slice(1)
+          : null,
+        year: filter.year ? parseInt(filter.year) : null,
         code: price.code,
         price: Number(price.price),
-      }));
-    } else if (filter.model && !filter.year) {
-      const prices = await this.prisma.vehicle_model.findMany({
-        where: {
-          name: {
-            contains: filter.model,
-            mode: 'insensitive',
-          },
-        },
-        select: {
-          name: true,
-          Pricelist: {
-            select: {
-              code: true,
-              price: true,
-            },
-          },
-        },
-      });
-
-      if (!prices || prices.length === 0) {
-        throw new NotFoundException(`Invalid model: ${filter.model}`, {
-          cause: new Error(),
-          description: 'Invalid model',
-        });
-      }
-
-      const result: PriceByModel[] = prices.reduce((acc, entry) => {
-        let modelEntry = acc.find((model) => model.model === entry.name);
-        if (!modelEntry) {
-          modelEntry = {
-            model: entry.name,
-            pricelist: entry.Pricelist.map((price) => ({
-              code: price.code,
-              price: Number(price.price),
-            })),
-          };
-
-          acc.push(modelEntry);
-        }
-
-        entry.Pricelist.forEach((price) => {
-          let codeEntry = modelEntry.pricelist?.find(
-            (code) => code.code === price.code,
-          );
-          if (!codeEntry) {
-            codeEntry = {
-              code: price.code,
-              price: Number(price.price),
-            };
-            modelEntry.pricelist?.push(codeEntry);
-          }
-        });
-        return acc;
-      }, [] as PriceByModel[]);
-
-      return result;
-    } else if (filter.year && !filter.model) {
-      const prices = await this.prisma.vehicle_year.findMany({
-        where: {
-          year: parseInt(filter.year),
-        },
-        select: {
-          year: true,
-          Pricelist: {
-            select: {
-              code: true,
-              price: true,
-            },
-          },
-        },
-      });
-
-      if (!prices || prices.length === 0) {
-        throw new NotFoundException(`Invalid year: ${filter.year}`, {
-          cause: new Error(),
-          description: 'Invalid year',
-        });
-      }
-
-      return prices.map((price) => ({
-        year: price.year,
-        pricelist: price.Pricelist.map((price) => ({
-          code: price.code,
-          price: Number(price.price),
-        })),
+        currentPage: parseInt(filter.pageNumber),
+        pageSize: prices.length < take ? prices.length : take,
       }));
     }
+    const prices = await this.prisma.pricelist.findMany({
+      where: {
+        OR: [
+          { model: { name: { contains: filter.model, mode: 'insensitive' } } },
+          { year: { year: filter.year ? parseInt(filter.year) : undefined } },
+          {
+            AND: [
+              {
+                year: { year: filter.year ? parseInt(filter.year) : undefined },
+                model: {
+                  name: { contains: filter.model, mode: 'insensitive' },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      select: {
+        code: true,
+        price: true,
+        year: {
+          select: {
+            year: true,
+          },
+        },
+        model: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!prices || prices.length === 0) {
+      throw new NotFoundException(`No data found`, {
+        cause: new Error(),
+        description: 'No data found',
+      });
+    }
+
+    return prices.map((price) => ({
+      model: filter.model
+        ? filter.model.charAt(0).toUpperCase() + filter.model.slice(1)
+        : null,
+      year: filter.year ? parseInt(filter.year) : null,
+      code: price.code,
+      price: Number(price.price),
+    }));
   }
 
   async getVehicleDetail(code: string) {
@@ -436,12 +455,109 @@ export class VehicleService {
       );
     }
   }
-}
 
-type PriceByModel = {
-  model: string;
-  pricelist?: {
-    code?: string;
-    price?: number;
-  }[];
-};
+  async updateModel(id: string, dto: UpdateModelDto) {
+    try {
+      const exisitingModel = await this.prisma.vehicle_model.findUnique({
+        where: { id },
+      });
+
+      if (!exisitingModel) {
+        throw new NotFoundException(`Invalid id: ${id}`, {
+          cause: new Error(),
+          description: 'Invalid id',
+        });
+      }
+
+      const updatedModel = await this.prisma.vehicle_model.update({
+        where: { id },
+        data: {
+          name: dto.model.toUpperCase(),
+        },
+      });
+
+      return updatedModel;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error(error);
+      throw new InternalServerErrorException(
+        `Failed to update model: ${error}`,
+        {
+          cause: new Error(),
+          description: 'Failed to update model',
+        },
+      );
+    }
+  }
+
+  async updateType(id: string, dto: UpdateTypeDto) {
+    try {
+      const existingType = await this.prisma.vehicle_type.findUnique({
+        where: { id },
+      });
+
+      if (!existingType) {
+        throw new NotFoundException(`Invalid id: ${id}`, {
+          cause: new Error(),
+          description: 'Invalid id',
+        });
+      }
+
+      const updatedType = await this.prisma.vehicle_type.update({
+        where: { id },
+        data: {
+          name: dto.type.toUpperCase(),
+        },
+      });
+
+      return updatedType;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error(error);
+      throw new InternalServerErrorException(
+        `Failed to update type: ${error}`,
+        {
+          cause: new Error(),
+          description: 'Failed to update type',
+        },
+      );
+    }
+  }
+
+  async deletePricelist(code: string) {
+    try {
+      const existingPrice = await this.prisma.pricelist.findUnique({
+        where: { code },
+      });
+
+      if (!existingPrice) {
+        throw new NotFoundException(`Invalid code: ${code}`, {
+          cause: new Error(),
+          description: 'Invalid code',
+        });
+      }
+
+      await this.prisma.pricelist.delete({
+        where: { code },
+      });
+
+      return {
+        status: HttpStatus.OK,
+        message: 'Price deleted successfully',
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error(error);
+      throw new InternalServerErrorException(`Failed to get price: ${error}`, {
+        cause: new Error(),
+        description: 'Failed to get price',
+      });
+    }
+  }
+}

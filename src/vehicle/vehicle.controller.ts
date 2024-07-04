@@ -22,8 +22,12 @@ import {
   GetPriceDto,
   UpdateBrandDto,
   UpdateBrandSchema,
+  UpdateModelDto,
+  UpdateModelSchema,
   UpdatePriceDto,
   UpdatePriceSchema,
+  UpdateTypeDto,
+  UpdateTypeSchema,
 } from './dto';
 import { Response } from 'express';
 
@@ -43,8 +47,19 @@ export class VehicleController {
   @Get('pricelist')
   async getAllPricelists(@Res() res: Response, @Query() filter?: GetPriceDto) {
     try {
-      if (!filter || Object.keys(filter).length === 0) {
-        const data = await this.vehicleService.getAllPricelists();
+      if (
+        !filter ||
+        Object.keys(filter).length === 0 ||
+        (filter.pageSize &&
+          filter.pageNumber &&
+          !filter.code &&
+          !filter.year &&
+          !filter.model)
+      ) {
+        const data = await this.vehicleService.getAllPricelists(
+          filter.pageNumber,
+          filter.pageSize,
+        );
 
         return res.status(200).json(data);
       }
@@ -102,19 +117,25 @@ export class VehicleController {
 
   @Patch('model/:id')
   @Role(['admin'])
-  async updateVehicleModel(@Param('id') id: string, @Body() dto: any) {
-    return 'this is update vehicle model';
+  async updateVehicleModel(
+    @Param('id') id: string,
+    @Body(new ZodPipe(UpdateModelSchema)) dto: UpdateModelDto,
+  ) {
+    return this.vehicleService.updateModel(id, dto);
   }
 
   @Patch('type/:id')
   @Role(['admin'])
-  async updateVehicleType(@Param('id') id: string, @Body() dto: any) {
-    return 'this is update vehicle type';
+  async updateVehicleType(
+    @Param('id') id: string,
+    @Body(new ZodPipe(UpdateTypeSchema)) dto: UpdateTypeDto,
+  ) {
+    return this.vehicleService.updateType(id, dto);
   }
 
   @Delete('price/:code')
   @Role(['admin'])
   async deleteVehiclePrice(@Param('code') code: string) {
-    return 'this is delete vehicle price';
+    return this.vehicleService.deletePricelist(code);
   }
 }

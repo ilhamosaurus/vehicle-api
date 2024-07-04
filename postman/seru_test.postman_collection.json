@@ -112,7 +112,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk1aTNndGswMDA5cHcxYTN5eXcwZTQ4IiwibmFtZSI6InRlc3QiLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTcyMDAzMjA1MCwiZXhwIjoxNzIwMDQyODUwfQ.95QJSmUqD7XmYs7Jv2COL1u4JSxy4wzbh7Jgcd-WTzU",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk0a3VjazcwMDAwdDk1Zjg2eHowenUyIiwibmFtZSI6ImlsaGFtbyIsImFkbWluIjp0cnVlLCJpYXQiOjE3MjAxMTgyOTQsImV4cCI6MTcyMDEyOTA5NH0.gsfbFNSIwqiab4Od5mTkLX6yQenNDCj8aP8-2zVH_mg",
 							"type": "string"
 						}
 					]
@@ -120,7 +120,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/vehicle/pricelist?model=EV",
+					"raw": "http://localhost:3000/vehicle/pricelist",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -143,7 +143,18 @@
 						},
 						{
 							"key": "model",
-							"value": "EV"
+							"value": "EV",
+							"disabled": true
+						},
+						{
+							"key": "pageSize",
+							"value": "10",
+							"disabled": true
+						},
+						{
+							"key": "pageNumber",
+							"value": "1",
+							"disabled": true
 						}
 					]
 				}
@@ -153,8 +164,221 @@
 		{
 			"name": "Get Vehicle Detail",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk1aTNndGswMDA5cHcxYTN5eXcwZTQ4IiwibmFtZSI6InRlc3QiLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTcyMDAzMjA1MCwiZXhwIjoxNzIwMDQyODUwfQ.95QJSmUqD7XmYs7Jv2COL1u4JSxy4wzbh7Jgcd-WTzU",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/vehicle/BMW-EV2023-5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"BMW-EV2023-5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Pricelist",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk0a3VjazcwMDAwdDk1Zjg2eHowenUyIiwibmFtZSI6ImlsaGFtbyIsImFkbWluIjp0cnVlLCJpYXQiOjE3MjAxMTgyOTQsImV4cCI6MTcyMDEyOTA5NH0.gsfbFNSIwqiab4Od5mTkLX6yQenNDCj8aP8-2zVH_mg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"code\": \"BMW-EV2023-005\",\r\n    \"price\": 950000000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/vehicle/price/BMW-EV2023-1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"price",
+						"BMW-EV2023-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Brand",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk0a3VjazcwMDAwdDk1Zjg2eHowenUyIiwibmFtZSI6ImlsaGFtbyIsImFkbWluIjp0cnVlLCJpYXQiOjE3MjAxMTgyOTQsImV4cCI6MTcyMDEyOTA5NH0.gsfbFNSIwqiab4Od5mTkLX6yQenNDCj8aP8-2zVH_mg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"brand\": \"Wuling\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/vehicle/brand/cly5hzx3g0001pw1ac3hz066h",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"brand",
+						"cly5hzx3g0001pw1ac3hz066h"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Model",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk0a3VjazcwMDAwdDk1Zjg2eHowenUyIiwibmFtZSI6ImlsaGFtbyIsImFkbWluIjp0cnVlLCJpYXQiOjE3MjAxMTgyOTQsImV4cCI6MTcyMDEyOTA5NH0.gsfbFNSIwqiab4Od5mTkLX6yQenNDCj8aP8-2zVH_mg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"model\": \"EV\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/vehicle/model/cly5k2xnp00024sgyt8cfha9s",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"model",
+						"cly5k2xnp00024sgyt8cfha9s"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Type",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk0a3VjazcwMDAwdDk1Zjg2eHowenUyIiwibmFtZSI6ImlsaGFtbyIsImFkbWluIjp0cnVlLCJpYXQiOjE3MjAxMTgyOTQsImV4cCI6MTcyMDEyOTA5NH0.gsfbFNSIwqiab4Od5mTkLX6yQenNDCj8aP8-2zVH_mg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"mini car\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/vehicle/type/cly5hzx3t0003pw1atojaytx4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"type",
+						"cly5hzx3t0003pw1atojaytx4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Pricelist",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHk0a3VjazcwMDAwdDk1Zjg2eHowenUyIiwibmFtZSI6ImlsaGFtbyIsImFkbWluIjp0cnVlLCJpYXQiOjE3MjAxMTgyOTQsImV4cCI6MTcyMDEyOTA5NH0.gsfbFNSIwqiab4Od5mTkLX6yQenNDCj8aP8-2zVH_mg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/vehicle/price/WULING-EV2024-003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vehicle",
+						"price",
+						"WULING-EV2024-003"
+					]
+				}
 			},
 			"response": []
 		}
