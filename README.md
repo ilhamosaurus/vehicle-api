@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Hai! this is another one example of my work using NestJs framework, Prisma ORM and PostgreSQL. With this one you also can deploy it using docker so have fun try to using it!
 
 ## Installation
 
@@ -45,17 +45,17 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Deployment using docker
 
 ```bash
-# unit tests
-$ npm run test
+# build an image
+$ docker-compose build
 
-# e2e tests
-$ npm run test:e2e
+# running container
+$ docker-compose up
 
-# test coverage
-$ npm run test:cov
+# running container on background
+$ docker-compose up -d
 ```
 
 ## Support

@@ -228,7 +228,9 @@ export class VehicleService {
             {
               model: { name: { contains: filter.model, mode: 'insensitive' } },
             },
-            { year: { year: filter.year ? parseInt(filter.year) : undefined } },
+            {
+              year: { year: filter.year ? parseInt(filter.year) : undefined },
+            },
             {
               AND: [
                 {
@@ -275,15 +277,16 @@ export class VehicleService {
         year: filter.year ? parseInt(filter.year) : null,
         code: price.code,
         price: Number(price.price),
-        currentPage: parseInt(filter.pageNumber),
-        pageSize: prices.length < take ? prices.length : take,
       }));
     }
+
     const prices = await this.prisma.pricelist.findMany({
       where: {
         OR: [
           { model: { name: { contains: filter.model, mode: 'insensitive' } } },
-          { year: { year: filter.year ? parseInt(filter.year) : undefined } },
+          {
+            year: { year: filter.year ? parseInt(filter.year) : undefined },
+          },
           {
             AND: [
               {
