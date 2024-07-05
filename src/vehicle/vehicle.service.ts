@@ -30,7 +30,9 @@ export class VehicleService {
           ? await tx.vehicle_brand.findFirst({
               where: { name: { contains: data.brand, mode: 'insensitive' } },
             })
-          : await tx.vehicle_brand.create({ data: { name: data.brand } });
+          : await tx.vehicle_brand.create({
+              data: { name: data.brand.toUpperCase() },
+            });
         const type = (await tx.vehicle_type.findFirst({
           where: {
             name: { contains: data.type, mode: 'insensitive' },
@@ -63,7 +65,7 @@ export class VehicleService {
             })
           : await tx.vehicle_model.create({
               data: {
-                name: data.model.charAt(0).toUpperCase() + data.model.slice(1),
+                name: data.model.toUpperCase(),
                 type_id: type.id,
               },
             });
